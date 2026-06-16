@@ -100,6 +100,11 @@ public class UserDataPanel
             AddMaiMile(0, _userInputId[6]);
             AddMaiMile(1, _userInputId[6]);
         }
+        if (GUILayout.Button("Sub", new GUIStyle(MainGUI.Style.Button){ fixedWidth = 50}))
+        {
+            SubtractMaiMile(0, _userInputId[6]);
+            SubtractMaiMile(1, _userInputId[6]);
+        }
         GUILayout.EndHorizontal();
         
         GUILayout.Label("User Data Backup", MainGUI.Style.Title);
@@ -378,6 +383,43 @@ public class UserDataPanel
         catch (Exception e)
         {
             GameMessageManager.SendMessage((int)index,$"Unknown error");
+            MelonLogger.Error(e);
+        }
+    }
+
+    private static void SubtractMaiMile(long index, string input)
+    {
+        UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
+        if (SinmaiAssist.GameVersion < 25000)
+        {
+            GameMessageManager.SendMessage((int)index,"MaiMile is not supported in this version");
+            return;
+        }
+        if (userData.IsGuest())
+        {
+            GameMessageManager.SendMessage((int)index,"Guest Account\nUnable to subtract MaiMile");
+            return;
+        }
+        try
+        {
+            if (int.TryParse(input, out int subMile))
+            {
+                var haveMile = userData.Detail.Point;
+                if (subMile > haveMile)
+                    subMile = haveMile;
+                var subMileAfter = haveMile - subMile;
+
+                userData.AddPresentMile(-subMile);
+                GameMessageManager.SendMessage((int)index,"Sub {subMile} MaiMile\n ({haveMile} -> {subMileAfter})");
+            }
+            else
+            {
+                GameMessageManager.SendMessage((int)index,"Invalid MaiMile\n {input}");
+            }
+        }
+        catch (Exception e)
+        {
+            GameMessageManager.SendMessage((int)index,"Unknown error");
             MelonLogger.Error(e);
         }
     }
