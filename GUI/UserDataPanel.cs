@@ -25,6 +25,8 @@ public class UserDataPanel
     }
     
     private static string[] _userInputId = ["", "", "", "", "", "", ""];
+    private static string _removeMusicId = "";
+    private static string _removeDifficulty = "";
     
     public static void OnGUI()
     {
@@ -66,15 +68,21 @@ public class UserDataPanel
             UnlockMusic(0, _userInputId[0]);
             UnlockMusic(1, _userInputId[0]);
         }
-        if (GUILayout.Button("Remove", new GUIStyle(MainGUI.Style.Button){ fixedWidth = 60}))
-        {
-            RemoveMusicScore(0, _userInputId[0]);
-            RemoveMusicScore(1, _userInputId[0]);
-        }
         if (GUILayout.Button("All", new GUIStyle(MainGUI.Style.Button){ fixedWidth = 50}))
         {
             UnlockAllMusic(0);
             UnlockAllMusic(1);
+        }
+        GUILayout.EndHorizontal();
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("Remove", new GUIStyle(MainGUI.Style.Text){fixedWidth = 50});
+        _removeMusicId = GUILayout.TextField(_removeMusicId);
+        GUILayout.Label("Diff", new GUIStyle(MainGUI.Style.Text){fixedWidth = 30});
+        _removeDifficulty = GUILayout.TextField(_removeDifficulty, new GUIStyle(UnityEngine.GUI.skin.textField){fixedWidth = 25});
+        if (GUILayout.Button("Remove", new GUIStyle(MainGUI.Style.Button){ fixedWidth = 60}))
+        {
+            RemoveMusicScore(0, _removeMusicId, _removeDifficulty);
+            RemoveMusicScore(1, _removeMusicId, _removeDifficulty);
         }
         GUILayout.EndHorizontal();
         
@@ -222,7 +230,7 @@ public class UserDataPanel
         }
     }
 
-    private static void RemoveMusicScore(long index, string input)
+    private static void RemoveMusicScore(long index, string input, string difficulty)
     {
         UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
         if (userData.IsGuest())
@@ -238,21 +246,35 @@ public class UserDataPanel
                 GameMessageManager.SendMessage((int)index, $"Invalid ID\n {input}");
                 return;
             }
+            bool hasDiff = int.TryParse(difficulty, out int targetDiff);
             int removedCount = 0;
             foreach (var idStr in ids)
             {
                 if (!int.TryParse(idStr, out int musicId)) continue;
 
                 bool removed = false;
-                for (int diff = 0; diff <= 5; diff++)
+                if (hasDiff)
                 {
                     try
                     {
-                        var diffScores = userData.ScoreDic[diff];
+                        var diffScores = userData.ScoreDic[targetDiff];
                         if (diffScores != null && diffScores.Remove(musicId))
                             removed = true;
                     }
-                    catch { break; }
+                    catch { }
+                }
+                else
+                {
+                    for (int diff = 0; diff <= 5; diff++)
+                    {
+                        try
+                        {
+                            var diffScores = userData.ScoreDic[diff];
+                            if (diffScores != null && diffScores.Remove(musicId))
+                                removed = true;
+                        }
+                        catch { break; }
+                    }
                 }
                 if (removed) removedCount++;
             }
