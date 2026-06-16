@@ -95,6 +95,11 @@ public class UserDataPanel
         GUILayout.Space(60);
         if (string.IsNullOrEmpty(_userInputId[0]))
         {
+            if (GUILayout.Button("All Base", MainGUI.Style.Button))
+            {
+                UnlockAllBaseOnly(0);
+                UnlockAllBaseOnly(1);
+            }
             if (GUILayout.Button("All Master", MainGUI.Style.Button))
             {
                 UnlockAllMasterOnly(0);
@@ -108,6 +113,11 @@ public class UserDataPanel
         }
         else
         {
+            if (GUILayout.Button("Only Base", new GUIStyle(MainGUI.Style.Button)))
+            {
+                UnlockBaseOnly(0, _userInputId[0]);
+                UnlockBaseOnly(1, _userInputId[0]);
+            }
             if (GUILayout.Button("Only Master", new GUIStyle(MainGUI.Style.Button)))
             {
                 UnlockMasterOnly(0, _userInputId[0]);
@@ -339,6 +349,36 @@ public class UserDataPanel
         }
     }
 
+    private static void UnlockAllBaseOnly(long index)
+    {
+        UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
+        if (userData.IsGuest())
+        {
+            GameMessageManager.SendMessage((int)index, "Guest Account\nUnable to unlock music");
+            return;
+        }
+        try
+        {
+            var musicDict = Singleton<DataManager>.Instance.GetMusics();
+            int count = 0;
+            foreach (var kvp in musicDict)
+            {
+                int id = kvp.Key;
+                if (!userData.IsUnlockMusic(UserData.MusicUnlock.Base, id))
+                {
+                    if (userData.AddUnlockMusic(UserData.MusicUnlock.Base, id))
+                        count++;
+                }
+            }
+            GameMessageManager.SendMessage((int)index, $"Unlock All Base\n{count} songs");
+        }
+        catch (Exception e)
+        {
+            GameMessageManager.SendMessage((int)index, "Unknown error");
+            MelonLogger.Error(e);
+        }
+    }
+
     private static void UnlockAllMasterOnly(long index)
     {
         UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
@@ -393,6 +433,43 @@ public class UserDataPanel
                 }
             }
             GameMessageManager.SendMessage((int)index, $"Unlock Only ReMaster\n{count} songs");
+        }
+        catch (Exception e)
+        {
+            GameMessageManager.SendMessage((int)index, "Unknown error");
+            MelonLogger.Error(e);
+        }
+    }
+
+    private static void UnlockBaseOnly(long index, string input)
+    {
+        UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
+        if (userData.IsGuest())
+        {
+            GameMessageManager.SendMessage((int)index, "Guest Account\nUnable to unlock music");
+            return;
+        }
+        try
+        {
+            var ids = input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            var messages = new System.Collections.Generic.List<string>();
+            foreach (var idStr in ids)
+            {
+                if (!int.TryParse(idStr, out int id)) continue;
+                if (!userData.IsUnlockMusic(UserData.MusicUnlock.Base, id))
+                {
+                    if (userData.AddUnlockMusic(UserData.MusicUnlock.Base, id))
+                        messages.Add($"Unlock Base {id}");
+                    else
+                        messages.Add($"Failed to unlock {id}");
+                }
+                else
+                {
+                    messages.Add($"Already unlocked {id}");
+                }
+            }
+            if (messages.Count > 0)
+                GameMessageManager.SendMessage((int)index, string.Join("\n", messages));
         }
         catch (Exception e)
         {
