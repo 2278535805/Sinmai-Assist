@@ -80,6 +80,19 @@ public class UserDataPanel
         }
         GUILayout.EndHorizontal();
         GUILayout.BeginHorizontal();
+        GUILayout.Space(50);
+        if (GUILayout.Button("Only Master", MainGUI.Style.Button))
+        {
+            UnlockAllMasterOnly(0);
+            UnlockAllMasterOnly(1);
+        }
+        if (GUILayout.Button("Only ReMaster", MainGUI.Style.Button))
+        {
+            UnlockAllReMasterOnly(0);
+            UnlockAllReMasterOnly(1);
+        }
+        GUILayout.EndHorizontal();
+        GUILayout.BeginHorizontal();
         GUILayout.Label("Score", new GUIStyle(MainGUI.Style.Text){fixedWidth = 50});
         _removeMusicId = GUILayout.TextField(_removeMusicId);
         GUILayout.Label("Diff", new GUIStyle(MainGUI.Style.Text){fixedWidth = 30});
@@ -299,6 +312,68 @@ public class UserDataPanel
         catch (Exception e)
         {
             GameMessageManager.SendMessage((int)index,$"Unknown error");
+            MelonLogger.Error(e);
+        }
+    }
+
+    private static void UnlockAllMasterOnly(long index)
+    {
+        UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
+        if (userData.IsGuest())
+        {
+            GameMessageManager.SendMessage((int)index, "Guest Account\nUnable to unlock music");
+            return;
+        }
+        try
+        {
+            var musicDict = Singleton<DataManager>.Instance.GetMusics();
+            int count = 0;
+            foreach (var kvp in musicDict)
+            {
+                int id = kvp.Key;
+                if (userData.IsUnlockMusic(UserData.MusicUnlock.Base, id)
+                    && !userData.IsUnlockMusic(UserData.MusicUnlock.Master, id))
+                {
+                    userData.AddUnlockMusic(UserData.MusicUnlock.Master, id);
+                    count++;
+                }
+            }
+            GameMessageManager.SendMessage((int)index, $"Unlock Only Master\n{count} songs");
+        }
+        catch (Exception e)
+        {
+            GameMessageManager.SendMessage((int)index, "Unknown error");
+            MelonLogger.Error(e);
+        }
+    }
+
+    private static void UnlockAllReMasterOnly(long index)
+    {
+        UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
+        if (userData.IsGuest())
+        {
+            GameMessageManager.SendMessage((int)index, "Guest Account\nUnable to unlock music");
+            return;
+        }
+        try
+        {
+            var musicDict = Singleton<DataManager>.Instance.GetMusics();
+            int count = 0;
+            foreach (var kvp in musicDict)
+            {
+                int id = kvp.Key;
+                if (userData.IsUnlockMusic(UserData.MusicUnlock.Base, id)
+                    && !userData.IsUnlockMusic(UserData.MusicUnlock.ReMaster, id))
+                {
+                    userData.AddUnlockMusic(UserData.MusicUnlock.ReMaster, id);
+                    count++;
+                }
+            }
+            GameMessageManager.SendMessage((int)index, $"Unlock Only ReMaster\n{count} songs");
+        }
+        catch (Exception e)
+        {
+            GameMessageManager.SendMessage((int)index, "Unknown error");
             MelonLogger.Error(e);
         }
     }
