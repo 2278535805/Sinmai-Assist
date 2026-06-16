@@ -182,24 +182,27 @@ public class UserDataPanel
                 GameMessageManager.SendMessage((int)index,$"Invalid ID\n {input}");
                 return;
             }
+            var messages = new System.Collections.Generic.List<string>();
             foreach (var idStr in ids)
             {
                 if (int.TryParse(idStr, out int id))
                 {
                     if (userData.AddCollections((UserData.Collection)type, id, _isNewItem))
                     {
-                        GameMessageManager.SendMessage((int)index,$"Add Collections \n{type} {id}" + (_isNewItem ? " (New Item)" : "") );
+                        messages.Add($"Add Collections {type} {id}" + (_isNewItem ? " (New Item)" : ""));
                     }
                     else
                     {
-                        GameMessageManager.SendMessage((int)index,$"Failed to add Collections or already added\n{type} {id}");
+                        messages.Add($"Failed to add Collections or already added\n{type} {id}");
                     }
                 }
                 else
                 {
-                    GameMessageManager.SendMessage((int)index,$"Invalid ID\n {idStr}");
+                    messages.Add($"Invalid ID {idStr}");
                 }
             }
+            if (messages.Count > 0)
+                GameMessageManager.SendMessage((int)index, string.Join("\n", messages));
         }
         catch (Exception e)
         {
@@ -268,11 +271,18 @@ public class UserDataPanel
                 GameMessageManager.SendMessage((int)index,$"Invalid ID\n {input}");
                 return;
             }
+            var messages = new System.Collections.Generic.List<string>();
             foreach (var idStr in ids)
             {
                 if (int.TryParse(idStr, out int id))
                 {
-                    var messages = new System.Collections.Generic.List<string>();
+                    if (userData.IsUnlockMusic(UserData.MusicUnlock.Base, id)
+                        && userData.IsUnlockMusic(UserData.MusicUnlock.Master, id)
+                        && userData.IsUnlockMusic(UserData.MusicUnlock.ReMaster, id))
+                    {
+                        messages.Add($"Already unlocked {id}");
+                        continue;
+                    }
                     if (!userData.IsUnlockMusic(UserData.MusicUnlock.Base, id))
                     {
                         if (userData.AddUnlockMusic(UserData.MusicUnlock.Base, id))
@@ -290,15 +300,14 @@ public class UserDataPanel
                         userData.AddUnlockMusic(UserData.MusicUnlock.ReMaster, id);
                         messages.Add($"Unlock ReMaster {id}");
                     }
-                    if (messages.Count == 0)
-                        messages.Add($"Already unlocked {id}");
-                    GameMessageManager.SendMessage((int)index, string.Join("\n", messages));
                 }
                 else
                 {
-                    GameMessageManager.SendMessage((int)index,$"Invalid ID\n {idStr}");
+                    messages.Add($"Invalid ID {idStr}");
                 }
             }
+            if (messages.Count > 0)
+                GameMessageManager.SendMessage((int)index, string.Join("\n", messages));
         }
         catch (Exception e)
         {
