@@ -120,7 +120,7 @@ public class UserDataPanel
         UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
         if (userData.IsGuest())
         {
-            GameMessageManager.SendMessage((int)index,"Guest Account\nUnable to add collections");
+            GameMessageManager.SendMessage((int)index,$"Guest Account\nUnable to add collections");
             return;
         }
         try
@@ -162,7 +162,7 @@ public class UserDataPanel
         UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
         if (userData.IsGuest())
         {
-            GameMessageManager.SendMessage((int)index, "Guest Account\nUnable to add collections");
+            GameMessageManager.SendMessage((int)index, $"Guest Account\nUnable to add collections");
             return;
         }
         try
@@ -196,7 +196,7 @@ public class UserDataPanel
         }
         catch (Exception e)
         {
-            GameMessageManager.SendMessage((int)index, "Unknown error");
+            GameMessageManager.SendMessage((int)index, $"Unknown error");
             MelonLogger.Error(e);
         }
     }
@@ -206,7 +206,7 @@ public class UserDataPanel
         UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
         if (userData.IsGuest())
         {
-            GameMessageManager.SendMessage((int)index,"Guest Account\nUnable to unlock music");
+            GameMessageManager.SendMessage((int)index,$"Guest Account\nUnable to unlock music");
             return;
         }
         try
@@ -261,7 +261,7 @@ public class UserDataPanel
         UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
         if (userData.IsGuest())
         {
-            GameMessageManager.SendMessage((int)index,"Guest Account\nUnable to unlock music");
+            GameMessageManager.SendMessage((int)index,$"Guest Account\nUnable to unlock music");
             return;
         }
         try
@@ -298,7 +298,7 @@ public class UserDataPanel
         UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
         if (userData.IsGuest())
         {
-            GameMessageManager.SendMessage((int)index, "Guest Account\nUnable to remove score");
+            GameMessageManager.SendMessage((int)index, $"Guest Account\nUnable to remove score");
             return;
         }
         try
@@ -345,7 +345,7 @@ public class UserDataPanel
         }
         catch (Exception e)
         {
-            GameMessageManager.SendMessage((int)index, "Unknown error");
+            GameMessageManager.SendMessage((int)index, $"Unknown error");
             MelonLogger.Error(e);
         }
     }
@@ -355,12 +355,12 @@ public class UserDataPanel
         UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
         if (SinmaiAssist.GameVersion < 25000)
         {
-            GameMessageManager.SendMessage((int)index,"MaiMile is not supported in this version");
+            GameMessageManager.SendMessage((int)index,$"MaiMile is not supported in this version");
             return;
         }
         if (userData.IsGuest())
         {
-            GameMessageManager.SendMessage((int)index,"Guest Account\nUnable to add MaiMile");
+            GameMessageManager.SendMessage((int)index,$"Guest Account\nUnable to add MaiMile");
             return;
         }
         try
@@ -392,12 +392,12 @@ public class UserDataPanel
         UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
         if (SinmaiAssist.GameVersion < 25000)
         {
-            GameMessageManager.SendMessage((int)index,"MaiMile is not supported in this version");
+            GameMessageManager.SendMessage((int)index,$"MaiMile is not supported in this version");
             return;
         }
         if (userData.IsGuest())
         {
-            GameMessageManager.SendMessage((int)index,"Guest Account\nUnable to subtract MaiMile");
+            GameMessageManager.SendMessage((int)index,$"Guest Account\nUnable to subtract MaiMile");
             return;
         }
         try
@@ -410,16 +410,16 @@ public class UserDataPanel
                 var subMileAfter = haveMile - subMile;
 
                 userData.AddPresentMile(-subMile);
-                GameMessageManager.SendMessage((int)index,"Sub {subMile} MaiMile\n ({haveMile} -> {subMileAfter})");
+                GameMessageManager.SendMessage((int)index,$"Sub {subMile} MaiMile\n ({haveMile} -> {subMileAfter})");
             }
             else
             {
-                GameMessageManager.SendMessage((int)index,"Invalid MaiMile\n {input}");
+                GameMessageManager.SendMessage((int)index,$"Invalid MaiMile\n {input}");
             }
         }
         catch (Exception e)
         {
-            GameMessageManager.SendMessage((int)index,"Unknown error");
+            GameMessageManager.SendMessage((int)index,$"Unknown error");
             MelonLogger.Error(e);
         }
     }
