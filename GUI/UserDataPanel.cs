@@ -71,10 +71,7 @@ public class UserDataPanel
             RemoveMusicScore(0, _userInputId[0]);
             RemoveMusicScore(1, _userInputId[0]);
         }
-        GUILayout.EndHorizontal();
-        GUILayout.BeginHorizontal();
-        GUILayout.Space(50);
-        if (GUILayout.Button("Unlock All", MainGUI.Style.Button))
+        if (GUILayout.Button("All", new GUIStyle(MainGUI.Style.Button){ fixedWidth = 50}))
         {
             UnlockAllMusic(0);
             UnlockAllMusic(1);
