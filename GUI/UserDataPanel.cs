@@ -50,15 +50,21 @@ public class UserDataPanel
             int typeId = (int)type;
             GUILayout.Label(type.ToString(), new GUIStyle(MainGUI.Style.Text){fixedWidth = 50});
             _userInputId[typeId] = GUILayout.TextField(_userInputId[typeId]);
-            if (GUILayout.Button("Add", new GUIStyle(MainGUI.Style.Button){ fixedWidth = 50}))
+            if (string.IsNullOrEmpty(_userInputId[typeId]))
             {
-                AddCollections(0, type, _userInputId[typeId]);
-                AddCollections(1, type, _userInputId[typeId]);
+                if (GUILayout.Button("All", new GUIStyle(MainGUI.Style.Button){ fixedWidth = 50}))
+                {
+                    AddAllCollections(0, type);
+                    AddAllCollections(1, type);
+                }
             }
-            if (GUILayout.Button("All", new GUIStyle(MainGUI.Style.Button){ fixedWidth = 50}))
+            else
             {
-                AddAllCollections(0, type);
-                AddAllCollections(1, type);
+                if (GUILayout.Button("Add", new GUIStyle(MainGUI.Style.Button){ fixedWidth = 50}))
+                {
+                    AddCollections(0, type, _userInputId[typeId]);
+                    AddCollections(1, type, _userInputId[typeId]);
+                }
             }
             GUILayout.EndHorizontal();
         }
@@ -68,28 +74,50 @@ public class UserDataPanel
         GUILayout.BeginHorizontal();
         GUILayout.Label("Music", new GUIStyle(MainGUI.Style.Text){fixedWidth = 50});
         _userInputId[0] = GUILayout.TextField(_userInputId[0]);
-        if (GUILayout.Button("Add", new GUIStyle(MainGUI.Style.Button){ fixedWidth = 50}))
+        if (string.IsNullOrEmpty(_userInputId[0]))
         {
-            UnlockMusic(0, _userInputId[0]);
-            UnlockMusic(1, _userInputId[0]);
+            if (GUILayout.Button("All", new GUIStyle(MainGUI.Style.Button){ fixedWidth = 50}))
+            {
+                UnlockAllMusic(0);
+                UnlockAllMusic(1);
+            }
         }
-        if (GUILayout.Button("All", new GUIStyle(MainGUI.Style.Button){ fixedWidth = 50}))
+        else
         {
-            UnlockAllMusic(0);
-            UnlockAllMusic(1);
+            if (GUILayout.Button("Add", new GUIStyle(MainGUI.Style.Button){ fixedWidth = 50}))
+            {
+                UnlockMusic(0, _userInputId[0]);
+                UnlockMusic(1, _userInputId[0]);
+            }
         }
         GUILayout.EndHorizontal();
         GUILayout.BeginHorizontal();
-        GUILayout.Space(50);
-        if (GUILayout.Button("Only Master", MainGUI.Style.Button))
+        GUILayout.Space(60);
+        if (string.IsNullOrEmpty(_userInputId[0]))
         {
-            UnlockAllMasterOnly(0);
-            UnlockAllMasterOnly(1);
+            if (GUILayout.Button("All Master", MainGUI.Style.Button))
+            {
+                UnlockAllMasterOnly(0);
+                UnlockAllMasterOnly(1);
+            }
+            if (GUILayout.Button("All ReMaster", MainGUI.Style.Button))
+            {
+                UnlockAllReMasterOnly(0);
+                UnlockAllReMasterOnly(1);
+            }
         }
-        if (GUILayout.Button("Only ReMaster", MainGUI.Style.Button))
+        else
         {
-            UnlockAllReMasterOnly(0);
-            UnlockAllReMasterOnly(1);
+            if (GUILayout.Button("Only Master", new GUIStyle(MainGUI.Style.Button)))
+            {
+                UnlockMasterOnly(0, _userInputId[0]);
+                UnlockMasterOnly(1, _userInputId[0]);
+            }
+            if (GUILayout.Button("Only ReMaster", new GUIStyle(MainGUI.Style.Button)))
+            {
+                UnlockReMasterOnly(0, _userInputId[0]);
+                UnlockReMasterOnly(1, _userInputId[0]);
+            }
         }
         GUILayout.EndHorizontal();
         GUILayout.BeginHorizontal();
@@ -365,6 +393,86 @@ public class UserDataPanel
                 }
             }
             GameMessageManager.SendMessage((int)index, $"Unlock Only ReMaster\n{count} songs");
+        }
+        catch (Exception e)
+        {
+            GameMessageManager.SendMessage((int)index, "Unknown error");
+            MelonLogger.Error(e);
+        }
+    }
+
+    private static void UnlockMasterOnly(long index, string input)
+    {
+        UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
+        if (userData.IsGuest())
+        {
+            GameMessageManager.SendMessage((int)index, "Guest Account\nUnable to unlock music");
+            return;
+        }
+        try
+        {
+            var ids = input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            var messages = new System.Collections.Generic.List<string>();
+            foreach (var idStr in ids)
+            {
+                if (!int.TryParse(idStr, out int id)) continue;
+                if (!userData.IsUnlockMusic(UserData.MusicUnlock.Base, id))
+                {
+                    messages.Add($"Not unlocked Base {id}");
+                    continue;
+                }
+                if (!userData.IsUnlockMusic(UserData.MusicUnlock.Master, id))
+                {
+                    userData.AddUnlockMusic(UserData.MusicUnlock.Master, id);
+                    messages.Add($"Unlock Master {id}");
+                }
+                else
+                {
+                    messages.Add($"Already unlocked {id}");
+                }
+            }
+            if (messages.Count > 0)
+                GameMessageManager.SendMessage((int)index, string.Join("\n", messages));
+        }
+        catch (Exception e)
+        {
+            GameMessageManager.SendMessage((int)index, "Unknown error");
+            MelonLogger.Error(e);
+        }
+    }
+
+    private static void UnlockReMasterOnly(long index, string input)
+    {
+        UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
+        if (userData.IsGuest())
+        {
+            GameMessageManager.SendMessage((int)index, "Guest Account\nUnable to unlock music");
+            return;
+        }
+        try
+        {
+            var ids = input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            var messages = new System.Collections.Generic.List<string>();
+            foreach (var idStr in ids)
+            {
+                if (!int.TryParse(idStr, out int id)) continue;
+                if (!userData.IsUnlockMusic(UserData.MusicUnlock.Base, id))
+                {
+                    messages.Add($"Not unlocked Base {id}");
+                    continue;
+                }
+                if (!userData.IsUnlockMusic(UserData.MusicUnlock.ReMaster, id))
+                {
+                    userData.AddUnlockMusic(UserData.MusicUnlock.ReMaster, id);
+                    messages.Add($"Unlock ReMaster {id}");
+                }
+                else
+                {
+                    messages.Add($"Already unlocked {id}");
+                }
+            }
+            if (messages.Count > 0)
+                GameMessageManager.SendMessage((int)index, string.Join("\n", messages));
         }
         catch (Exception e)
         {
