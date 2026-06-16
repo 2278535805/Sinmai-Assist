@@ -66,6 +66,11 @@ public class UserDataPanel
             UnlockMusic(0, _userInputId[0]);
             UnlockMusic(1, _userInputId[0]);
         }
+        if (GUILayout.Button("Remove", new GUIStyle(MainGUI.Style.Button){ fixedWidth = 60}))
+        {
+            RemoveMusicScore(0, _userInputId[0]);
+            RemoveMusicScore(1, _userInputId[0]);
+        }
         GUILayout.EndHorizontal();
         GUILayout.BeginHorizontal();
         GUILayout.Space(50);
@@ -216,6 +221,49 @@ public class UserDataPanel
         catch (Exception e)
         {
             GameMessageManager.SendMessage((int)index,$"Unknown error");
+            MelonLogger.Error(e);
+        }
+    }
+
+    private static void RemoveMusicScore(long index, string input)
+    {
+        UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
+        if (userData.IsGuest())
+        {
+            GameMessageManager.SendMessage((int)index, "Guest Account\nUnable to remove score");
+            return;
+        }
+        try
+        {
+            var ids = input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            if (ids.Length == 0)
+            {
+                GameMessageManager.SendMessage((int)index, $"Invalid ID\n {input}");
+                return;
+            }
+            int removedCount = 0;
+            foreach (var idStr in ids)
+            {
+                if (!int.TryParse(idStr, out int musicId)) continue;
+
+                bool removed = false;
+                for (int diff = 0; diff <= 5; diff++)
+                {
+                    try
+                    {
+                        var diffScores = userData.ScoreDic[diff];
+                        if (diffScores != null && diffScores.Remove(musicId))
+                            removed = true;
+                    }
+                    catch { break; }
+                }
+                if (removed) removedCount++;
+            }
+            GameMessageManager.SendMessage((int)index, $"Removed Score\n{removedCount} song(s)");
+        }
+        catch (Exception e)
+        {
+            GameMessageManager.SendMessage((int)index, "Unknown error");
             MelonLogger.Error(e);
         }
     }
