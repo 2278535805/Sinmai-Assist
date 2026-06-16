@@ -258,11 +258,6 @@ public class UserDataPanel
     private static void UnlockMusic(long index, string input)
     {
         UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
-        if (userData.IsGuest())
-        {
-            GameMessageManager.SendMessage((int)index,$"Guest Account\nUnable to unlock music");
-            return;
-        }
         try
         {
             var ids = input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -319,11 +314,6 @@ public class UserDataPanel
     private static void UnlockAllMusic(long index)
     {
         UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
-        if (userData.IsGuest())
-        {
-            GameMessageManager.SendMessage((int)index,$"Guest Account\nUnable to unlock music");
-            return;
-        }
         try
         {
             var musicDict = Singleton<DataManager>.Instance.GetMusics();
@@ -361,11 +351,6 @@ public class UserDataPanel
     private static void UnlockAllBaseOnly(long index)
     {
         UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
-        if (userData.IsGuest())
-        {
-            GameMessageManager.SendMessage((int)index, "Guest Account\nUnable to unlock music");
-            return;
-        }
         try
         {
             var musicDict = Singleton<DataManager>.Instance.GetMusics();
@@ -391,11 +376,6 @@ public class UserDataPanel
     private static void UnlockAllMasterOnly(long index)
     {
         UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
-        if (userData.IsGuest())
-        {
-            GameMessageManager.SendMessage((int)index, "Guest Account\nUnable to unlock music");
-            return;
-        }
         try
         {
             var musicDict = Singleton<DataManager>.Instance.GetMusics();
@@ -422,11 +402,6 @@ public class UserDataPanel
     private static void UnlockAllReMasterOnly(long index)
     {
         UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
-        if (userData.IsGuest())
-        {
-            GameMessageManager.SendMessage((int)index, "Guest Account\nUnable to unlock music");
-            return;
-        }
         try
         {
             var musicDict = Singleton<DataManager>.Instance.GetMusics();
@@ -453,11 +428,6 @@ public class UserDataPanel
     private static void UnlockBaseOnly(long index, string input)
     {
         UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
-        if (userData.IsGuest())
-        {
-            GameMessageManager.SendMessage((int)index, "Guest Account\nUnable to unlock music");
-            return;
-        }
         try
         {
             var ids = input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -490,11 +460,6 @@ public class UserDataPanel
     private static void UnlockMasterOnly(long index, string input)
     {
         UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
-        if (userData.IsGuest())
-        {
-            GameMessageManager.SendMessage((int)index, "Guest Account\nUnable to unlock music");
-            return;
-        }
         try
         {
             var ids = input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -530,11 +495,6 @@ public class UserDataPanel
     private static void UnlockReMasterOnly(long index, string input)
     {
         UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
-        if (userData.IsGuest())
-        {
-            GameMessageManager.SendMessage((int)index, "Guest Account\nUnable to unlock music");
-            return;
-        }
         try
         {
             var ids = input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -570,11 +530,6 @@ public class UserDataPanel
     private static void RemoveMusicScore(long index, string input, string difficulty)
     {
         UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
-        if (userData.IsGuest())
-        {
-            GameMessageManager.SendMessage((int)index, $"Guest Account\nUnable to remove score");
-            return;
-        }
         try
         {
             var ids = input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
