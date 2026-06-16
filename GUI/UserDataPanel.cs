@@ -234,32 +234,27 @@ public class UserDataPanel
             {
                 if (int.TryParse(idStr, out int id))
                 {
+                    var messages = new System.Collections.Generic.List<string>();
                     if (!userData.IsUnlockMusic(UserData.MusicUnlock.Base, id))
                     {
                         if (userData.AddUnlockMusic(UserData.MusicUnlock.Base, id))
-                        {
-                            GameMessageManager.SendMessage((int)index,$"Unlock Music \n{id}");
-                        }
+                            messages.Add($"Unlock Music {id}");
                         else
-                        {
-                            GameMessageManager.SendMessage((int)index,$"Failed to unlock music or already unlocked \n{id}");
-                        }
+                            messages.Add($"Failed to unlock music {id}");
                     }
-                    else if(!userData.IsUnlockMusic(UserData.MusicUnlock.Master, id))
+                    if (!userData.IsUnlockMusic(UserData.MusicUnlock.Master, id))
                     {
                         userData.AddUnlockMusic(UserData.MusicUnlock.Master, id);
-                        userData.AddUnlockMusic(UserData.MusicUnlock.ReMaster, id);
-                        GameMessageManager.SendMessage((int)index,$"Unlock Master \n{id}");
+                        messages.Add($"Unlock Master {id}");
                     }
-                    else if(!userData.IsUnlockMusic(UserData.MusicUnlock.ReMaster, id))
+                    if (!userData.IsUnlockMusic(UserData.MusicUnlock.ReMaster, id))
                     {
                         userData.AddUnlockMusic(UserData.MusicUnlock.ReMaster, id);
-                        GameMessageManager.SendMessage((int)index,$"Unlock ReMaster \n{id}");
+                        messages.Add($"Unlock ReMaster {id}");
                     }
-                    else
-                    {
-                        GameMessageManager.SendMessage((int)index,$"Failed to unlock Master or already unlocked\n{id}");
-                    }
+                    if (messages.Count == 0)
+                        messages.Add($"Already unlocked {id}");
+                    GameMessageManager.SendMessage((int)index, string.Join("\n", messages));
                 }
                 else
                 {
