@@ -238,6 +238,11 @@ public class UserDataPanel
                         userData.AddUnlockMusic(UserData.MusicUnlock.ReMaster, id);
                         GameMessageManager.SendMessage((int)index,$"Unlock Master \n{id}");
                     }
+                    else if(!userData.IsUnlockMusic(UserData.MusicUnlock.ReMaster, id))
+                    {
+                        userData.AddUnlockMusic(UserData.MusicUnlock.ReMaster, id);
+                        GameMessageManager.SendMessage((int)index,$"Unlock ReMaster \n{id}");
+                    }
                     else
                     {
                         GameMessageManager.SendMessage((int)index,$"Failed to unlock Master or already unlocked\n{id}");
@@ -269,6 +274,7 @@ public class UserDataPanel
             var musicDict = Singleton<DataManager>.Instance.GetMusics();
             int baseCount = 0;
             int masterCount = 0;
+            int reMasterCount = 0;
             foreach (var kvp in musicDict)
             {
                 int id = kvp.Key;
@@ -280,11 +286,15 @@ public class UserDataPanel
                 if (!userData.IsUnlockMusic(UserData.MusicUnlock.Master, id))
                 {
                     userData.AddUnlockMusic(UserData.MusicUnlock.Master, id);
-                    userData.AddUnlockMusic(UserData.MusicUnlock.ReMaster, id);
                     masterCount++;
                 }
+                if (!userData.IsUnlockMusic(UserData.MusicUnlock.ReMaster, id))
+                {
+                    userData.AddUnlockMusic(UserData.MusicUnlock.ReMaster, id);
+                    reMasterCount++;
+                }
             }
-            GameMessageManager.SendMessage((int)index,$"Unlock All Complete\nBase: {baseCount}, Master: {masterCount}");
+            GameMessageManager.SendMessage((int)index,$"Unlock All Complete\nBase: {baseCount}, Master: {masterCount}, ReMaster: {reMasterCount}");
         }
         catch (Exception e)
         {
