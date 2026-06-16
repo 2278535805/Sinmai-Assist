@@ -43,7 +43,7 @@ public class UserDataPanel
         GUILayout.Label($"1P: {_player1.Detail.UserName} ({_player1.Detail.UserID})", MainGUI.Style.Text);
         GUILayout.Label($"2P: {_player2.Detail.UserName} ({_player2.Detail.UserID})", MainGUI.Style.Text);
         
-        GUILayout.Label("Add Collections", MainGUI.Style.Title);
+        GUILayout.Label("Add Collections (Space-Separated)", MainGUI.Style.Title);
         foreach (CollectionType type in Enum.GetValues(typeof(CollectionType)))
         {
             GUILayout.BeginHorizontal();
@@ -55,11 +55,16 @@ public class UserDataPanel
                 AddCollections(0, type, _userInputId[typeId]);
                 AddCollections(1, type, _userInputId[typeId]);
             }
+            if (GUILayout.Button("All", new GUIStyle(MainGUI.Style.Button){ fixedWidth = 50}))
+            {
+                AddAllCollections(0, type);
+                AddAllCollections(1, type);
+            }
             GUILayout.EndHorizontal();
         }
         _isNewItem = GUILayout.Toggle(_isNewItem, "Is New Item");
         
-        GUILayout.Label("Unlock Music", MainGUI.Style.Title);
+        GUILayout.Label("Unlock Music (Space-Separated)", MainGUI.Style.Title);
         GUILayout.BeginHorizontal();
         GUILayout.Label("Music", new GUIStyle(MainGUI.Style.Text){fixedWidth = 50});
         _userInputId[0] = GUILayout.TextField(_userInputId[0]);
@@ -115,25 +120,78 @@ public class UserDataPanel
         }
         try
         {
-            if (int.TryParse(input, out int id))
+            var ids = input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            if (ids.Length == 0)
             {
-                if (userData.AddCollections((UserData.Collection)type, id, _isNewItem))
+                GameMessageManager.SendMessage((int)index,$"Invalid ID\n {input}");
+                return;
+            }
+            foreach (var idStr in ids)
+            {
+                if (int.TryParse(idStr, out int id))
                 {
-                    GameMessageManager.SendMessage((int)index,$"Add Collections \n{type} {id}" + (_isNewItem ? " (New Item)" : "") );
+                    if (userData.AddCollections((UserData.Collection)type, id, _isNewItem))
+                    {
+                        GameMessageManager.SendMessage((int)index,$"Add Collections \n{type} {id}" + (_isNewItem ? " (New Item)" : "") );
+                    }
+                    else
+                    {
+                        GameMessageManager.SendMessage((int)index,$"Failed to add Collections or already added\n{type} {id}");
+                    }
                 }
                 else
                 {
-                    GameMessageManager.SendMessage((int)index,$"Failed to add Collections or already added\n{type} {id}");
+                    GameMessageManager.SendMessage((int)index,$"Invalid ID\n {idStr}");
                 }
-            }
-            else
-            {
-                GameMessageManager.SendMessage((int)index,$"Invalid ID\n {input}");
             }
         }
         catch (Exception e)
         {
             GameMessageManager.SendMessage((int)index,$"Unknown error");
+            MelonLogger.Error(e);
+        }
+    }
+
+    private static void AddAllCollections(long index, CollectionType type)
+    {
+        UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
+        if (userData.IsGuest())
+        {
+            GameMessageManager.SendMessage((int)index, "Guest Account\nUnable to add collections");
+            return;
+        }
+        try
+        {
+            int count = 0;
+            var userCollectionType = (UserData.Collection)type;
+            switch (type)
+            {
+                case CollectionType.Frame:
+                    foreach (var kvp in Singleton<DataManager>.Instance.GetFrames())
+                        if (userData.AddCollections(userCollectionType, kvp.Value.GetID(), _isNewItem)) count++;
+                    break;
+                case CollectionType.Icon:
+                    foreach (var kvp in Singleton<DataManager>.Instance.GetIcons())
+                        if (userData.AddCollections(userCollectionType, kvp.Value.GetID(), _isNewItem)) count++;
+                    break;
+                case CollectionType.Plate:
+                    foreach (var kvp in Singleton<DataManager>.Instance.GetPlates())
+                        if (userData.AddCollections(userCollectionType, kvp.Value.GetID(), _isNewItem)) count++;
+                    break;
+                case CollectionType.Partner:
+                    foreach (var kvp in Singleton<DataManager>.Instance.GetPartners())
+                        if (userData.AddCollections(userCollectionType, kvp.Value.GetID(), _isNewItem)) count++;
+                    break;
+                case CollectionType.Title:
+                    foreach (var kvp in Singleton<DataManager>.Instance.GetTitles())
+                        if (userData.AddCollections(userCollectionType, kvp.Value.GetID(), _isNewItem)) count++;
+                    break;
+            }
+            GameMessageManager.SendMessage((int)index, $"Add All {type}\n{count} items");
+        }
+        catch (Exception e)
+        {
+            GameMessageManager.SendMessage((int)index, "Unknown error");
             MelonLogger.Error(e);
         }
     }
