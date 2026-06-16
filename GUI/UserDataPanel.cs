@@ -80,7 +80,7 @@ public class UserDataPanel
         }
         GUILayout.EndHorizontal();
         GUILayout.BeginHorizontal();
-        GUILayout.Label("Remove", new GUIStyle(MainGUI.Style.Text){fixedWidth = 50});
+        GUILayout.Label("Score", new GUIStyle(MainGUI.Style.Text){fixedWidth = 50});
         _removeMusicId = GUILayout.TextField(_removeMusicId);
         GUILayout.Label("Diff", new GUIStyle(MainGUI.Style.Text){fixedWidth = 30});
         _removeDifficulty = GUILayout.TextField(_removeDifficulty, new GUIStyle(UnityEngine.GUI.skin.textField){fixedWidth = 25});
