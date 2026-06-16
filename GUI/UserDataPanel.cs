@@ -67,6 +67,14 @@ public class UserDataPanel
             UnlockMusic(1, _userInputId[0]);
         }
         GUILayout.EndHorizontal();
+        GUILayout.BeginHorizontal();
+        GUILayout.Space(50);
+        if (GUILayout.Button("Unlock All", MainGUI.Style.Button))
+        {
+            UnlockAllMusic(0);
+            UnlockAllMusic(1);
+        }
+        GUILayout.EndHorizontal();
         
         GUILayout.Label("MaiMile", MainGUI.Style.Title);
         GUILayout.BeginHorizontal();
@@ -130,34 +138,80 @@ public class UserDataPanel
         }
         try
         {
-            if (int.TryParse(input, out int id))
+            var ids = input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            if (ids.Length == 0)
             {
-                if (!userData.IsUnlockMusic(UserData.MusicUnlock.Base, id))
+                GameMessageManager.SendMessage((int)index,$"Invalid ID\n {input}");
+                return;
+            }
+            foreach (var idStr in ids)
+            {
+                if (int.TryParse(idStr, out int id))
                 {
-                    if (userData.AddUnlockMusic(UserData.MusicUnlock.Base, id))
+                    if (!userData.IsUnlockMusic(UserData.MusicUnlock.Base, id))
                     {
-                        GameMessageManager.SendMessage((int)index,$"Unlock Music \n{id}");
+                        if (userData.AddUnlockMusic(UserData.MusicUnlock.Base, id))
+                        {
+                            GameMessageManager.SendMessage((int)index,$"Unlock Music \n{id}");
+                        }
+                        else
+                        {
+                            GameMessageManager.SendMessage((int)index,$"Failed to unlock music or already unlocked \n{id}");
+                        }
+                    }
+                    else if(!userData.IsUnlockMusic(UserData.MusicUnlock.Master, id))
+                    {
+                        userData.AddUnlockMusic(UserData.MusicUnlock.Master, id);
+                        userData.AddUnlockMusic(UserData.MusicUnlock.ReMaster, id);
+                        GameMessageManager.SendMessage((int)index,$"Unlock Master \n{id}");
                     }
                     else
                     {
-                        GameMessageManager.SendMessage((int)index,$"Failed to unlock music or already unlocked \n{id}");
+                        GameMessageManager.SendMessage((int)index,$"Failed to unlock Master or already unlocked\n{id}");
                     }
-                }
-                else if(!userData.IsUnlockMusic(UserData.MusicUnlock.Master, id))
-                {
-                    userData.AddUnlockMusic(UserData.MusicUnlock.Master, id);
-                    userData.AddUnlockMusic(UserData.MusicUnlock.ReMaster, id);
-                    GameMessageManager.SendMessage((int)index,$"Unlock Master \n{id}");
                 }
                 else
                 {
-                    GameMessageManager.SendMessage((int)index,$"Failed to unlock Master or already unlocked\n{id}");
+                    GameMessageManager.SendMessage((int)index,$"Invalid ID\n {idStr}");
                 }
             }
-            else
+        }
+        catch (Exception e)
+        {
+            GameMessageManager.SendMessage((int)index,$"Unknown error");
+            MelonLogger.Error(e);
+        }
+    }
+
+    private static void UnlockAllMusic(long index)
+    {
+        UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
+        if (userData.IsGuest())
+        {
+            GameMessageManager.SendMessage((int)index,"Guest Account\nUnable to unlock music");
+            return;
+        }
+        try
+        {
+            var musicDict = Singleton<DataManager>.Instance.GetMusics();
+            int baseCount = 0;
+            int masterCount = 0;
+            foreach (var kvp in musicDict)
             {
-                GameMessageManager.SendMessage((int)index,$"Invalid ID\n {input}");
+                int id = kvp.Key;
+                if (!userData.IsUnlockMusic(UserData.MusicUnlock.Base, id))
+                {
+                    if (userData.AddUnlockMusic(UserData.MusicUnlock.Base, id))
+                        baseCount++;
+                }
+                if (!userData.IsUnlockMusic(UserData.MusicUnlock.Master, id))
+                {
+                    userData.AddUnlockMusic(UserData.MusicUnlock.Master, id);
+                    userData.AddUnlockMusic(UserData.MusicUnlock.ReMaster, id);
+                    masterCount++;
+                }
             }
+            GameMessageManager.SendMessage((int)index,$"Unlock All Complete\nBase: {baseCount}, Master: {masterCount}");
         }
         catch (Exception e)
         {
