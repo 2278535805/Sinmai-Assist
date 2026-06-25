@@ -61,6 +61,7 @@ cheat:
   forceCurrentIsBest: false
   setAllCharacterAsSameAndLock: false
   unlockKaleidxScope: false
+  kaleidxScope: false
   rewriteLoginBonusStamp: 
     enable: false 
     point: 0

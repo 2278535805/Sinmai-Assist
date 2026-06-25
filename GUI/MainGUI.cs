@@ -68,7 +68,7 @@ public class MainGUI
         else if (_toolbar == Toolbar.ChartController && SinmaiAssist.MainConfig.Cheat.ChartController) ChartControllerPanel.OnGUI();
         else if (_toolbar == Toolbar.DummyLogin && SinmaiAssist.MainConfig.Common.DummyLogin.Enable) DummyLoginPanel.OnGUI();
         else if (_toolbar == Toolbar.UserData) UserDataPanel.OnGUI();
-        else if (_toolbar == Toolbar.KaleidxScope) KaleidxScopePanel.OnGUI();
+        else if (_toolbar == Toolbar.KaleidxScope && SinmaiAssist.MainConfig.Cheat.KaleidxScope) KaleidxScopePanel.OnGUI();
         else if (_toolbar == Toolbar.Graphic) GraphicPanel.OnGUI();
         else if (_toolbar == Toolbar.Debug) DebugPanel.OnGUI();
         else DisablePanel();

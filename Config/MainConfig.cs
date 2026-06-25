@@ -48,6 +48,7 @@ public class MainConfig
         public bool SetAllCharacterAsSameAndLock { get; set; } = false;
         public RewriteLoginBonusStampConfig RewriteLoginBonusStamp { get; set; } = new RewriteLoginBonusStampConfig();
         public bool UnlockKaleidxScope { get; set; } = false;
+        public bool KaleidxScope { get; set; } = false;
     }
 
     public class FixConfig
