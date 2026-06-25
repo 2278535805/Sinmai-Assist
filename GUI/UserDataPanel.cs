@@ -26,7 +26,8 @@ public class UserDataPanel
     }
     
     private static Vector2 _userDataScrollPos = Vector2.zero;
-    private static string[] _userInputId = ["", "", "", "", "", "", "", ""];
+    private static string[] _userInputId = ["", "", "", "", "", "", "", "", ""];
+    private static string _loginBonusPoint = "";
     private static string _removeMusicId = "";
     private static string _removeDifficulty = "";
     
@@ -164,33 +165,41 @@ public class UserDataPanel
 
         GUILayout.Label("Login Bonus", MainGUI.Style.Title);
         GUILayout.BeginHorizontal();
-        GUILayout.Label("Point", new GUIStyle(MainGUI.Style.Text) { fixedWidth = 40 });
-        _userInputId[7] = GUILayout.TextField(_userInputId[7]);
-        if (GUILayout.Button("Set All", new GUIStyle(MainGUI.Style.Button) { fixedWidth = 55 }))
+        GUILayout.Label("ID", new GUIStyle(MainGUI.Style.Text) { fixedWidth = 20 });
+        _userInputId[7] = GUILayout.TextField(_userInputId[7], new GUIStyle(UnityEngine.GUI.skin.textField));
+        GUILayout.Label("Pt", new GUIStyle(MainGUI.Style.Text) { fixedWidth = 20 });
+        _loginBonusPoint = GUILayout.TextField(_loginBonusPoint, new GUIStyle(UnityEngine.GUI.skin.textField));
+        string setIdText = string.IsNullOrEmpty(_userInputId[7]) ? "All" : "Set";
+        if (GUILayout.Button(setIdText, new GUIStyle(MainGUI.Style.Button) { fixedWidth = 45 }))
         {
-            if (uint.TryParse(_userInputId[7], out uint pt))
+            if (uint.TryParse(_loginBonusPoint, out uint pt))
             {
-                SetLoginBonusPoint(0, pt);
-                SetLoginBonusPoint(1, pt);
-                GameMessageManager.SendMessage(0, $"LoginBonus Point={pt}");
+                ApplyLoginBonus(0, pt, _userInputId[7]);
+                ApplyLoginBonus(1, pt, _userInputId[7]);
+                GameMessageManager.SendMessage(0, string.IsNullOrEmpty(_userInputId[7]) ? $"LoginBonus All={pt}" : $"LoginBonus ID={_userInputId[7]} Pt={pt}");
             }
         }
-        if (GUILayout.Button("Complete", new GUIStyle(MainGUI.Style.Button) { fixedWidth = 65 }))
+        if (GUILayout.Button("Comp", new GUIStyle(MainGUI.Style.Button) { fixedWidth = 45 }))
         {
-            if (uint.TryParse(_userInputId[7], out uint pt))
+            if (uint.TryParse(_loginBonusPoint, out uint pt))
             {
-                CompleteLoginBonus(0, pt);
-                CompleteLoginBonus(1, pt);
-                GameMessageManager.SendMessage(0, $"LoginBonus Complete Point={pt}");
+                CompleteLoginBonus(0, pt, _userInputId[7]);
+                CompleteLoginBonus(1, pt, _userInputId[7]);
             }
         }
         GUILayout.EndHorizontal();
         var bonus1 = _player1?.LoginBonusList;
         var bonus2 = _player2?.LoginBonusList;
         if (bonus1 != null && bonus1.Count > 0)
-            GUILayout.Label($"1P Bonus: {bonus1.Count} card(s) | Current: {bonus1.Find(b => b.IsCurrent)?.Point ?? 0}pt", MainGUI.Style.Text);
+        {
+            foreach (var b in bonus1)
+                GUILayout.Label($"1P ID:{b.ID} Point:{b.Point} {(!b.IsComplete ? "x" : "√")}" + (b.IsCurrent ? " *" : ""), new GUIStyle(MainGUI.Style.Text));
+        }
         if (bonus2 != null && bonus2.Count > 0)
-            GUILayout.Label($"2P Bonus: {bonus2.Count} card(s) | Current: {bonus2.Find(b => b.IsCurrent)?.Point ?? 0}pt", MainGUI.Style.Text);
+        {
+            foreach (var b in bonus2)
+                GUILayout.Label($"2P ID:{b.ID} Point:{b.Point} {(!b.IsComplete ? "x" : "√")}" + (b.IsCurrent ? " *" : ""), new GUIStyle(MainGUI.Style.Text));
+        }
         
         GUILayout.Label("User Data Backup", MainGUI.Style.Title);
         GUILayout.BeginHorizontal();
@@ -693,24 +702,30 @@ public class UserDataPanel
         }
     }
 
-    private static void SetLoginBonusPoint(long index, uint point)
+    private static void ApplyLoginBonus(long index, uint point, string idText)
     {
         var userData = User.GetUserData(index);
         if (userData == null || userData.IsGuest()) return;
 
+        int filterId = -1;
+        if (!string.IsNullOrEmpty(idText)) int.TryParse(idText, out filterId);
         foreach (var bonus in userData.LoginBonusList)
         {
+            if (filterId >= 0 && bonus.ID != filterId) continue;
             bonus.Point = point;
         }
     }
 
-    private static void CompleteLoginBonus(long index, uint point)
+    private static void CompleteLoginBonus(long index, uint point, string idText)
     {
         var userData = User.GetUserData(index);
         if (userData == null || userData.IsGuest()) return;
 
+        int filterId = -1;
+        if (!string.IsNullOrEmpty(idText)) int.TryParse(idText, out filterId);
         foreach (var bonus in userData.LoginBonusList)
         {
+            if (filterId >= 0 && bonus.ID != filterId) continue;
             bonus.Point = point;
             bonus.IsComplete = true;
             bonus.IsCurrent = true;
