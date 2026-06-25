@@ -17,6 +17,7 @@ public class UserDataPanel
     
     private enum CollectionType
     {
+        Chara = UserData.Collection.Chara,
         Icon = UserData.Collection.Icon,
         Plate = UserData.Collection.Plate,
         Title = UserData.Collection.Title,
@@ -243,6 +244,10 @@ public class UserDataPanel
                     break;
                 case CollectionType.Title:
                     foreach (var kvp in Singleton<DataManager>.Instance.GetTitles())
+                        if (userData.AddCollections(userCollectionType, kvp.Value.GetID(), _isNewItem)) count++;
+                    break;
+                case CollectionType.Chara:
+                    foreach (var kvp in Singleton<DataManager>.Instance.GetCharas())
                         if (userData.AddCollections(userCollectionType, kvp.Value.GetID(), _isNewItem)) count++;
                     break;
             }
