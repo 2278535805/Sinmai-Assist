@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using MAI2.Util;
@@ -78,8 +78,8 @@ public class UserDataPanel
         GUILayout.Label("Unlock Music (Space-Separated)", MainGUI.Style.Title);
         GUILayout.BeginHorizontal();
         GUILayout.Label("Music", new GUIStyle(MainGUI.Style.Text){fixedWidth = 50});
-        _userInputId[0] = GUILayout.TextField(_userInputId[0]);
-        if (string.IsNullOrEmpty(_userInputId[0]))
+        _userInputId[6] = GUILayout.TextField(_userInputId[6]);
+        if (string.IsNullOrEmpty(_userInputId[6]))
         {
             if (GUILayout.Button("All", new GUIStyle(MainGUI.Style.Button){ fixedWidth = 50}))
             {
@@ -91,14 +91,14 @@ public class UserDataPanel
         {
             if (GUILayout.Button("Add", new GUIStyle(MainGUI.Style.Button){ fixedWidth = 50}))
             {
-                UnlockMusic(0, _userInputId[0]);
-                UnlockMusic(1, _userInputId[0]);
+                UnlockMusic(0, _userInputId[6]);
+                UnlockMusic(1, _userInputId[6]);
             }
         }
         GUILayout.EndHorizontal();
         GUILayout.BeginHorizontal();
         GUILayout.Space(60);
-        if (string.IsNullOrEmpty(_userInputId[0]))
+        if (string.IsNullOrEmpty(_userInputId[6]))
         {
             if (GUILayout.Button("All Base", MainGUI.Style.Button))
             {
@@ -120,18 +120,18 @@ public class UserDataPanel
         {
             if (GUILayout.Button("Only Base", new GUIStyle(MainGUI.Style.Button)))
             {
-                UnlockBaseOnly(0, _userInputId[0]);
-                UnlockBaseOnly(1, _userInputId[0]);
+                UnlockBaseOnly(0, _userInputId[6]);
+                UnlockBaseOnly(1, _userInputId[6]);
             }
             if (GUILayout.Button("Only Master", new GUIStyle(MainGUI.Style.Button)))
             {
-                UnlockMasterOnly(0, _userInputId[0]);
-                UnlockMasterOnly(1, _userInputId[0]);
+                UnlockMasterOnly(0, _userInputId[6]);
+                UnlockMasterOnly(1, _userInputId[6]);
             }
             if (GUILayout.Button("Only ReMaster", new GUIStyle(MainGUI.Style.Button)))
             {
-                UnlockReMasterOnly(0, _userInputId[0]);
-                UnlockReMasterOnly(1, _userInputId[0]);
+                UnlockReMasterOnly(0, _userInputId[6]);
+                UnlockReMasterOnly(1, _userInputId[6]);
             }
         }
         GUILayout.EndHorizontal();
@@ -150,41 +150,42 @@ public class UserDataPanel
         GUILayout.Label("MaiMile", MainGUI.Style.Title);
         GUILayout.BeginHorizontal();
         GUILayout.Label("MaiMile", new GUIStyle(MainGUI.Style.Text){fixedWidth = 50});
-        _userInputId[6] = GUILayout.TextField(_userInputId[6]);
+        _userInputId[7] = GUILayout.TextField(_userInputId[7]);
         if (GUILayout.Button("Add", new GUIStyle(MainGUI.Style.Button){ fixedWidth = 50}))
         {
-            AddMaiMile(0, _userInputId[6]);
-            AddMaiMile(1, _userInputId[6]);
+            AddMaiMile(0, _userInputId[7]);
+            AddMaiMile(1, _userInputId[7]);
         }
         if (GUILayout.Button("Sub", new GUIStyle(MainGUI.Style.Button){ fixedWidth = 50}))
         {
-            SubtractMaiMile(0, _userInputId[6]);
-            SubtractMaiMile(1, _userInputId[6]);
+            SubtractMaiMile(0, _userInputId[7]);
+            SubtractMaiMile(1, _userInputId[7]);
         }
         GUILayout.EndHorizontal();
 
         GUILayout.Label("Login Bonus", MainGUI.Style.Title);
         GUILayout.BeginHorizontal();
         GUILayout.Label("ID", new GUIStyle(MainGUI.Style.Text) { fixedWidth = 20 });
-        _userInputId[7] = GUILayout.TextField(_userInputId[7], new GUIStyle(UnityEngine.GUI.skin.textField));
+        _userInputId[8] = GUILayout.TextField(_userInputId[8], new GUIStyle(UnityEngine.GUI.skin.textField));
         GUILayout.Label("Pt", new GUIStyle(MainGUI.Style.Text) { fixedWidth = 20 });
         _loginBonusPoint = GUILayout.TextField(_loginBonusPoint, new GUIStyle(UnityEngine.GUI.skin.textField));
-        string setIdText = string.IsNullOrEmpty(_userInputId[7]) ? "All" : "Set";
-        if (GUILayout.Button(setIdText, new GUIStyle(MainGUI.Style.Button) { fixedWidth = 45 }))
+        string setIdText = string.IsNullOrEmpty(_userInputId[8]) ? "All" : "Set";
+        string compText = string.IsNullOrEmpty(_userInputId[8]) ? "AllComp" : "Comp";
+        if (GUILayout.Button(setIdText, new GUIStyle(MainGUI.Style.Button) { fixedWidth = 35 }))
         {
             if (uint.TryParse(_loginBonusPoint, out uint pt))
             {
-                ApplyLoginBonus(0, pt, _userInputId[7]);
-                ApplyLoginBonus(1, pt, _userInputId[7]);
-                GameMessageManager.SendMessage(0, string.IsNullOrEmpty(_userInputId[7]) ? $"LoginBonus All={pt}" : $"LoginBonus ID={_userInputId[7]} Pt={pt}");
+                ApplyLoginBonus(0, pt, _userInputId[8]);
+                ApplyLoginBonus(1, pt, _userInputId[8]);
+                GameMessageManager.SendMessage(0, string.IsNullOrEmpty(_userInputId[8]) ? $"LoginBonus All={pt}" : $"LoginBonus ID={_userInputId[8]} Pt={pt}");
             }
         }
-        if (GUILayout.Button("Comp", new GUIStyle(MainGUI.Style.Button) { fixedWidth = 45 }))
+        if (GUILayout.Button(compText, new GUIStyle(MainGUI.Style.Button) { fixedWidth = 55 }))
         {
             if (uint.TryParse(_loginBonusPoint, out uint pt))
             {
-                CompleteLoginBonus(0, pt, _userInputId[7]);
-                CompleteLoginBonus(1, pt, _userInputId[7]);
+                CompleteLoginBonus(0, pt, _userInputId[8]);
+                CompleteLoginBonus(1, pt, _userInputId[8]);
             }
         }
         GUILayout.EndHorizontal();
@@ -193,12 +194,12 @@ public class UserDataPanel
         if (bonus1 != null && bonus1.Count > 0)
         {
             foreach (var b in bonus1)
-                GUILayout.Label($"1P ID:{b.ID} Point:{b.Point} {(!b.IsComplete ? "x" : "√")}" + (b.IsCurrent ? " *" : ""), new GUIStyle(MainGUI.Style.Text));
+                GUILayout.Label($"1P ID:{b.ID} Point:{b.Point} {(!b.IsComplete ? "×" : "√")}" + (b.IsCurrent ? " *" : ""), new GUIStyle(MainGUI.Style.Text));
         }
         if (bonus2 != null && bonus2.Count > 0)
         {
             foreach (var b in bonus2)
-                GUILayout.Label($"2P ID:{b.ID} Point:{b.Point} {(!b.IsComplete ? "x" : "√")}" + (b.IsCurrent ? " *" : ""), new GUIStyle(MainGUI.Style.Text));
+                GUILayout.Label($"2P ID:{b.ID} Point:{b.Point} {(!b.IsComplete ? "×" : "√")}" + (b.IsCurrent ? " *" : ""), new GUIStyle(MainGUI.Style.Text));
         }
         
         GUILayout.Label("User Data Backup", MainGUI.Style.Title);
@@ -732,3 +733,4 @@ public class UserDataPanel
         }
     }
 }
+
