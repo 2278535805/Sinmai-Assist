@@ -33,27 +33,25 @@ public class KaleidxScopePanel
 
             GUILayout.Label("Batch Operations", MainGUI.Style.Title);
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button("All Found", new GUIStyle(MainGUI.Style.Button){ fixedWidth = 160 }))
+            if (GUILayout.Button("All Found", new GUIStyle(MainGUI.Style.Button)))
             {
                 UnlockAllGates(0, true, false, false, false);
                 UnlockAllGates(1, true, false, false, false);
                 GameMessageManager.SendMessage(0, "All Gates Found");
             }
-            if (GUILayout.Button("All Key", new GUIStyle(MainGUI.Style.Button){ fixedWidth = 160 }))
+            if (GUILayout.Button("All Key", new GUIStyle(MainGUI.Style.Button)))
             {
                 UnlockAllKeys(0, false, false);
                 UnlockAllKeys(1, false, false);
                 GameMessageManager.SendMessage(0, "All Keys Found");
             }
-            GUILayout.EndHorizontal();
-            GUILayout.BeginHorizontal();
-            if (GUILayout.Button("All Clear", new GUIStyle(MainGUI.Style.Button){ fixedWidth = 160 }))
+            if (GUILayout.Button("All Clear", new GUIStyle(MainGUI.Style.Button)))
             {
                 UnlockAllGates(0, true, true, true, true);
                 UnlockAllGates(1, true, true, true, true);
                 GameMessageManager.SendMessage(0, "All Cleared");
             }
-            if (GUILayout.Button("Reset All", new GUIStyle(MainGUI.Style.Button){ fixedWidth = 160 }))
+            if (GUILayout.Button("Reset All", new GUIStyle(MainGUI.Style.Button)))
             {
                 ResetAll(0);
                 ResetAll(1);
