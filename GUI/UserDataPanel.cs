@@ -25,7 +25,8 @@ public class UserDataPanel
         Frame = UserData.Collection.Frame
     }
     
-    private static string[] _userInputId = ["", "", "", "", "", "", ""];
+    private static Vector2 _userDataScrollPos = Vector2.zero;
+    private static string[] _userInputId = ["", "", "", "", "", "", "", ""];
     private static string _removeMusicId = "";
     private static string _removeDifficulty = "";
     
@@ -41,6 +42,8 @@ public class UserDataPanel
         {
             // ignore
         }
+        _userDataScrollPos = GUILayout.BeginScrollView(_userDataScrollPos, GUILayout.Width(330f), GUILayout.Height(370f));
+
         GUILayout.Label($"1P: {_player1.Detail.UserName} ({_player1.Detail.UserID})", MainGUI.Style.Text);
         GUILayout.Label($"2P: {_player2.Detail.UserName} ({_player2.Detail.UserID})", MainGUI.Style.Text);
         
@@ -158,12 +161,44 @@ public class UserDataPanel
             SubtractMaiMile(1, _userInputId[6]);
         }
         GUILayout.EndHorizontal();
+
+        GUILayout.Label("Login Bonus", MainGUI.Style.Title);
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("Point", new GUIStyle(MainGUI.Style.Text) { fixedWidth = 40 });
+        _userInputId[7] = GUILayout.TextField(_userInputId[7]);
+        if (GUILayout.Button("Set All", new GUIStyle(MainGUI.Style.Button) { fixedWidth = 55 }))
+        {
+            if (uint.TryParse(_userInputId[7], out uint pt))
+            {
+                SetLoginBonusPoint(0, pt);
+                SetLoginBonusPoint(1, pt);
+                GameMessageManager.SendMessage(0, $"LoginBonus Point={pt}");
+            }
+        }
+        if (GUILayout.Button("Complete", new GUIStyle(MainGUI.Style.Button) { fixedWidth = 65 }))
+        {
+            if (uint.TryParse(_userInputId[7], out uint pt))
+            {
+                CompleteLoginBonus(0, pt);
+                CompleteLoginBonus(1, pt);
+                GameMessageManager.SendMessage(0, $"LoginBonus Complete Point={pt}");
+            }
+        }
+        GUILayout.EndHorizontal();
+        var bonus1 = _player1?.LoginBonusList;
+        var bonus2 = _player2?.LoginBonusList;
+        if (bonus1 != null && bonus1.Count > 0)
+            GUILayout.Label($"1P Bonus: {bonus1.Count} card(s) | Current: {bonus1.Find(b => b.IsCurrent)?.Point ?? 0}pt", MainGUI.Style.Text);
+        if (bonus2 != null && bonus2.Count > 0)
+            GUILayout.Label($"2P Bonus: {bonus2.Count} card(s) | Current: {bonus2.Find(b => b.IsCurrent)?.Point ?? 0}pt", MainGUI.Style.Text);
         
         GUILayout.Label("User Data Backup", MainGUI.Style.Title);
         GUILayout.BeginHorizontal();
         if (GUILayout.Button("1P", MainGUI.Style.Button)) User.ExportBackupData(0);
         if (GUILayout.Button("2P", MainGUI.Style.Button)) User.ExportBackupData(1);
         GUILayout.EndHorizontal();
+
+        GUILayout.EndScrollView();
         
     }
 
@@ -655,6 +690,30 @@ public class UserDataPanel
         {
             GameMessageManager.SendMessage((int)index,$"Unknown error");
             MelonLogger.Error(e);
+        }
+    }
+
+    private static void SetLoginBonusPoint(long index, uint point)
+    {
+        var userData = User.GetUserData(index);
+        if (userData == null || userData.IsGuest()) return;
+
+        foreach (var bonus in userData.LoginBonusList)
+        {
+            bonus.Point = point;
+        }
+    }
+
+    private static void CompleteLoginBonus(long index, uint point)
+    {
+        var userData = User.GetUserData(index);
+        if (userData == null || userData.IsGuest()) return;
+
+        foreach (var bonus in userData.LoginBonusList)
+        {
+            bonus.Point = point;
+            bonus.IsComplete = true;
+            bonus.IsCurrent = true;
         }
     }
 }
