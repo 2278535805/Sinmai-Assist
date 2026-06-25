@@ -60,6 +60,7 @@ cheat:
   resetLoginBonusRecord: false
   forceCurrentIsBest: false
   setAllCharacterAsSameAndLock: false
+  unlockKaleidxScope: false
   rewriteLoginBonusStamp: 
     enable: false 
     point: 0

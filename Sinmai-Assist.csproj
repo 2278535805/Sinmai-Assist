@@ -312,6 +312,7 @@
     <Compile Include="Cheat\UnlockMaster.cs" />
     <Compile Include="Cheat\UnlockMusic.cs" />
     <Compile Include="Cheat\UnlockUtage.cs" />
+    <Compile Include="Cheat\UnlockKaleidxScope.cs" />
     <Compile Include="Common\AutoBackupData.cs" />
     <Compile Include="Common\BlockCoin.cs" />
     <Compile Include="Common\ChangeDefaultOption.cs" />
@@ -357,6 +358,7 @@
     <Compile Include="GUI\DummyLoginPanel.cs" />
     <Compile Include="GUI\FastSkipPanel.cs" />
     <Compile Include="GUI\GraphicPanel.cs" />
+    <Compile Include="GUI\KaleidxScopePanel.cs" />
     <Compile Include="GUI\MainGUI.cs" />
     <Compile Include="GUI\ShowVersionInfo.cs" />
     <Compile Include="GUI\Style.cs" />
