@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using MAI2.Util;
+using MAI2System;
 using Manager;
 using MelonLoader;
 using SinmaiAssist.Utils;
@@ -26,7 +27,7 @@ public class UserDataPanel
     }
     
     private static Vector2 _userDataScrollPos = Vector2.zero;
-    private static string[] _userInputId = ["", "", "", "", "", "", "", "", ""];
+    private static string[] _userInputId = ["", "", "", "", "", "", "", "", "", ""];
     private static string _loginBonusPoint = "";
     private static string _removeMusicId = "";
     private static string _removeDifficulty = "";
@@ -154,6 +155,17 @@ public class UserDataPanel
         {
             RemoveMusicScore(0, _removeMusicId, _removeDifficulty);
             RemoveMusicScore(1, _removeMusicId, _removeDifficulty);
+        }
+        GUILayout.EndHorizontal();
+        
+        GUILayout.Label("MapStock", MainGUI.Style.Title);
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("Stock", new GUIStyle(MainGUI.Style.Text){fixedWidth = 50});
+        _userInputId[9] = GUILayout.TextField(_userInputId[9]);
+        if (GUILayout.Button("Set", new GUIStyle(MainGUI.Style.Button){ fixedWidth = 50}))
+        {
+            SetMapStock(0, _userInputId[9]);
+            SetMapStock(1, _userInputId[9]);
         }
         GUILayout.EndHorizontal();
         
@@ -763,6 +775,39 @@ public class UserDataPanel
                 if (removed) removedCount++;
             }
             GameMessageManager.SendMessage((int)index, $"Removed Score\n{removedCount} song(s)");
+        }
+        catch (Exception e)
+        {
+            GameMessageManager.SendMessage((int)index, $"Unknown error");
+            MelonLogger.Error(e);
+        }
+    }
+
+    private static void SetMapStock(long index, string input)
+    {
+        UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
+        if (userData.IsGuest())
+        {
+            GameMessageManager.SendMessage((int)index, $"Guest Account\nUnable to modify MapStock");
+            return;
+        }
+        try
+        {
+            if (int.TryParse(input, out int stock))
+            {
+                int before = userData.Detail.MapStock / 1000;
+                stock *= 1000;
+                if (stock > ConstParameter.MaxMapStockNum)
+                    stock = ConstParameter.MaxMapStockNum;
+                if (stock < 0)
+                    stock = 0;
+                userData.Detail.MapStock = stock;
+                GameMessageManager.SendMessage((int)index, $"Set MapStock\n ({before} -> {stock / 1000})");
+            }
+            else
+            {
+                GameMessageManager.SendMessage((int)index, $"Invalid MapStock\n {input}");
+            }
         }
         catch (Exception e)
         {
