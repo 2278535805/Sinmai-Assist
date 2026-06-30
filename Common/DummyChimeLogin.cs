@@ -36,87 +36,12 @@ public class DummyChimeLogin
     }
 
     [HarmonyPrefix]
-    [HarmonyPatch(typeof(CameraManager), "GetTexture")]
-    public static bool GetTexture(ref WebCamTexture __result)
-    {
-        __result = null;
-        return false;
-    }
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(CameraManager), "IsPlayingPhotoCamera")]
-    public static bool IsPlayingPhotoCamera(ref bool __result)
-    {
-        __result = false;
-        return false;
-    }
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(CameraManager), "PlayPhotoCamera")]
-    public static bool PlayPhotoCamera() { return false; }
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(CameraManager), "PlayPhotoOnly")]
-    public static bool PlayPhotoOnly() { return false; }
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(CameraManager), "PausePhoto")]
-    public static bool PausePhoto() { return false; }
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(CameraManager), "StopPhoto")]
-    public static bool StopPhoto() { return false; }
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(CameraManager), "GetColor32")]
-    public static bool GetColor32(ref Color32[] __result)
-    {
-        __result = null;
-        return false;
-    }
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(CameraManager), "CameraInitialize")]
-    public static bool CameraInitialize(CameraManager __instance, ref IEnumerator __result)
-    {
-        __result = CameraInitialize(__instance);
-        return false;
-    }
-
-    public static IEnumerator CameraInitialize(CameraManager __instance)
-    {
-        CameraManager.IsReady = true;
-        yield break;
-    }
-
-    // ChimeDevice Patch
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(ChimeDevice), MethodType.Constructor, new[] { typeof(WebCamTexture) })]
-    public static bool ChimeDevice(WebCamTexture texture) { return false; }
-
-    [HarmonyPrefix]
     [HarmonyPatch(typeof(ChimeDevice), "HasError")]
     public static bool HasError(ref bool __result)
     {
         __result = false;
         return false;
     }
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(ChimeDevice), "IsReady")]
-    public static bool IsReady(ref bool __result)
-    {
-        __result = true;
-        return false;
-    }
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(ChimeDevice), "BeginScan")]
-    public static bool BeginScan() { return false; }
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(ChimeDevice), "EndScan")]
-    public static bool EndScan() { return false; }
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(ChimeDevice), "GetDecodeStrings")]
@@ -136,8 +61,7 @@ public class DummyChimeLogin
                 return false;
             }
         }
-        __result = null;
-        return false;
+        return true;
     }
 
     // ChimeReaderManager Patch

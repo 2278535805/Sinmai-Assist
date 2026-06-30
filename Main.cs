@@ -137,14 +137,7 @@ namespace SinmaiAssist
             
             if (MainConfig.Common.CustomCameraId.Enable)
             {
-                if (MainConfig.Common.DummyLogin.Enable)
-                {
-                    MelonLogger.Warning("DummyLogin enabled, CustomCameraId has been automatically disabled.");
-                }
-                else
-                {
-                    Patch(typeof(CustomCameraId));
-                }
+                Patch(typeof(CustomCameraId));
             }
 
             // Common
