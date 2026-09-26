@@ -527,6 +527,10 @@ public class UserDataPanel
             foreach (var kvp in musicDict)
             {
                 int id = kvp.Key;
+                if (id == 011879)
+                {
+                    continue;
+                }
                 if (!userData.IsUnlockMusic(UserData.MusicUnlock.Base, id))
                 {
                     if (userData.AddUnlockMusic(UserData.MusicUnlock.Base, id))
