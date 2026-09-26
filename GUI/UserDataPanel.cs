@@ -49,7 +49,7 @@ public class UserDataPanel
         GUILayout.Label($"1P: {_player1.Detail.UserName} ({_player1.Detail.UserID})", MainGUI.Style.Text);
         GUILayout.Label($"2P: {_player2.Detail.UserName} ({_player2.Detail.UserID})", MainGUI.Style.Text);
         
-        GUILayout.Label("Add / Remove Collections (Space-Separated)", MainGUI.Style.Title);
+        GUILayout.Label("Add Collections (Space-Separated)", MainGUI.Style.Title);
         foreach (CollectionType type in Enum.GetValues(typeof(CollectionType)))
         {
             GUILayout.BeginHorizontal();
@@ -63,11 +63,6 @@ public class UserDataPanel
                     AddAllCollections(0, type);
                     AddAllCollections(1, type);
                 }
-                if (GUILayout.Button("Rem All", new GUIStyle(MainGUI.Style.Button){ fixedWidth = 55}))
-                {
-                    RemoveAllCollections(0, type);
-                    RemoveAllCollections(1, type);
-                }
             }
             else
             {
@@ -75,11 +70,6 @@ public class UserDataPanel
                 {
                     AddCollections(0, type, _userInputId[typeId]);
                     AddCollections(1, type, _userInputId[typeId]);
-                }
-                if (GUILayout.Button("Remove", new GUIStyle(MainGUI.Style.Button){ fixedWidth = 55}))
-                {
-                    RemoveCollections(0, type, _userInputId[typeId]);
-                    RemoveCollections(1, type, _userInputId[typeId]);
                 }
             }
             GUILayout.EndHorizontal();
@@ -319,138 +309,6 @@ public class UserDataPanel
                     break;
             }
             GameMessageManager.SendMessage((int)index, $"Add All {type}\n{count} items");
-        }
-        catch (Exception e)
-        {
-            GameMessageManager.SendMessage((int)index, $"Unknown error");
-            MelonLogger.Error(e);
-        }
-    }
-
-    private static void RemoveCollections(long index, CollectionType type, string input)
-    {
-        UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
-        if (userData.IsGuest())
-        {
-            GameMessageManager.SendMessage((int)index, $"Guest Account\nUnable to remove collections");
-            return;
-        }
-        try
-        {
-            var ids = input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            if (ids.Length == 0)
-            {
-                GameMessageManager.SendMessage((int)index, $"Invalid ID\n {input}");
-                return;
-            }
-            var messages = new System.Collections.Generic.List<string>();
-            foreach (var idStr in ids)
-            {
-                if (int.TryParse(idStr, out int id))
-                {
-                    int removed = 0;
-                    switch (type)
-                    {
-                        case CollectionType.Chara:
-                            removed += userData.CharaList.RemoveAll(c => c.ID == id);
-                            userData.NewCharaList.Remove(id);
-                            userData.FavoriteCharaList.Remove(id);
-                            break;
-                        case CollectionType.Icon:
-                            removed += userData.IconList.RemoveAll(i => i.itemId == id);
-                            userData.NewIconList.Remove(id);
-                            userData.FavoriteIconList.Remove(id);
-                            break;
-                        case CollectionType.Plate:
-                            removed += userData.PlateList.RemoveAll(i => i.itemId == id);
-                            userData.NewPlateList.Remove(id);
-                            userData.FavoritePlateList.Remove(id);
-                            break;
-                        case CollectionType.Title:
-                            removed += userData.TitleList.RemoveAll(i => i.itemId == id);
-                            userData.NewTitleList.Remove(id);
-                            userData.FavoriteTitleList.Remove(id);
-                            break;
-                        case CollectionType.Partner:
-                            removed += userData.PartnerList.RemoveAll(i => i.itemId == id);
-                            userData.NewPartnerList.Remove(id);
-                            break;
-                        case CollectionType.Frame:
-                            removed += userData.FrameList.RemoveAll(i => i.itemId == id);
-                            userData.NewFrameList.Remove(id);
-                            userData.FavoriteFrameList.Remove(id);
-                            break;
-                    }
-                    if (removed > 0)
-                        messages.Add($"Remove Collections {type} {id}");
-                    else
-                        messages.Add($"Not found {type} {id}");
-                }
-                else
-                {
-                    messages.Add($"Invalid ID {idStr}");
-                }
-            }
-            if (messages.Count > 0)
-                GameMessageManager.SendMessage((int)index, string.Join("\n", messages));
-        }
-        catch (Exception e)
-        {
-            GameMessageManager.SendMessage((int)index, $"Unknown error");
-            MelonLogger.Error(e);
-        }
-    }
-
-    private static void RemoveAllCollections(long index, CollectionType type)
-    {
-        UserData userData = Singleton<UserDataManager>.Instance.GetUserData(index);
-        if (userData.IsGuest())
-        {
-            GameMessageManager.SendMessage((int)index, $"Guest Account\nUnable to remove collections");
-            return;
-        }
-        try
-        {
-            int count = 0;
-            switch (type)
-            {
-                case CollectionType.Frame:
-                    count = userData.FrameList.Count;
-                    userData.FrameList.Clear();
-                    userData.NewFrameList.Clear();
-                    userData.FavoriteFrameList.Clear();
-                    break;
-                case CollectionType.Icon:
-                    count = userData.IconList.Count;
-                    userData.IconList.Clear();
-                    userData.NewIconList.Clear();
-                    userData.FavoriteIconList.Clear();
-                    break;
-                case CollectionType.Plate:
-                    count = userData.PlateList.Count;
-                    userData.PlateList.Clear();
-                    userData.NewPlateList.Clear();
-                    userData.FavoritePlateList.Clear();
-                    break;
-                case CollectionType.Partner:
-                    count = userData.PartnerList.Count;
-                    userData.PartnerList.Clear();
-                    userData.NewPartnerList.Clear();
-                    break;
-                case CollectionType.Title:
-                    count = userData.TitleList.Count;
-                    userData.TitleList.Clear();
-                    userData.NewTitleList.Clear();
-                    userData.FavoriteTitleList.Clear();
-                    break;
-                case CollectionType.Chara:
-                    count = userData.CharaList.Count;
-                    userData.CharaList.Clear();
-                    userData.NewCharaList.Clear();
-                    userData.FavoriteCharaList.Clear();
-                    break;
-            }
-            GameMessageManager.SendMessage((int)index, $"Remove All {type}\n{count} items");
         }
         catch (Exception e)
         {
