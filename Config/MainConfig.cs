@@ -31,6 +31,7 @@ public class MainConfig
         public DummyLoginConfig DummyLogin { get; set; } = new DummyLoginConfig();
         public CustomCameraIdConfig CustomCameraId { get; set; } = new CustomCameraIdConfig();
         public ChangeGameSettingsConfig ChangeGameSettings { get; set; } = new ChangeGameSettingsConfig();
+        public ReduceInputLatencyConfig ReduceInputLatency { get; set; } = new ReduceInputLatencyConfig();
     }
     
     public class CheatConfig
@@ -82,6 +83,13 @@ public class MainConfig
         public bool IconPhoto { get; set; } = false;
         public bool UploadPhoto { get; set; } = false;
         public bool CharaSelect { get; set; } = false;
+    }
+
+    public class ReduceInputLatencyConfig
+    {
+        public bool Enable { get; set; } = false;
+        public bool RemoveInputBuffer { get; set; } = true;
+        public bool DisableBounceFilter { get; set; } = true;
     }
     
     public class SinglePlayerConfig

@@ -41,6 +41,10 @@
     iconPhoto: false
     uploadPhoto: false
     charaSelect: false
+  reduceInputLatency:
+    enable: false
+    removeInputBuffer: true
+    disableBounceFilter: true
     
 cheat:
   autoPlay: false

@@ -149,6 +149,15 @@ namespace SinmaiAssist
             if (MainConfig.Common.SinglePlayer.Enable) Patch(typeof(SinglePlayer));
             if (MainConfig.Common.ForceQuickRetry) Patch(typeof(ForceQuickRetry));
             if (MainConfig.Common.ForwardATouchRegionToButton) Patch(typeof(ForwardATouchRegionToButton));
+            if (MainConfig.Common.ReduceInputLatency.Enable)
+            {
+                if (MainConfig.Common.ReduceInputLatency.RemoveInputBuffer) Patch(typeof(ReduceInputLatency));
+                if (MainConfig.Common.ReduceInputLatency.DisableBounceFilter)
+                {
+                    Patch(typeof(JvsBounceBypass));
+                    Patch(typeof(GameInputLogBounceBypass));
+                }
+            }
             // 存在资源加载问题，现已禁用
             // if (MainConfig.Common.QuickBoot) Patch(typeof(QuickBoot)); 
             if (MainConfig.Common.BlockCoin) Patch(typeof(BlockCoin));

@@ -41,6 +41,10 @@
     iconPhoto: false # 是否启用拍摄头像功能
     uploadPhoto: false # 是否启用拍摄纪念照上传
     charaSelect: false # 是否启用角色选择界面
+  reduceInputLatency: # 降低输入延时
+    enable: false # 是否启用
+    removeInputBuffer: true # 去除游戏内判定的一帧输入缓冲
+    disableBounceFilter: true # 绕过按键/触摸防抖过滤(ON-OFF-ON)
 
 cheat:
   autoPlay: false # 自动游玩 

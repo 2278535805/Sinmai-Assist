@@ -328,6 +328,7 @@
     <Compile Include="Common\DisableMask.cs" />
     <Compile Include="Common\DummyAimeLogin.cs" />
     <Compile Include="Common\ForwardATouchRegionToButton.cs" />
+    <Compile Include="Common\ReduceInputLatency.cs" />
     <Compile Include="Common\Graphic.cs" />
     <Compile Include="Common\IgnoreAnyGameInformation.cs" />
     <Compile Include="Common\InfinityTimer.cs" />
