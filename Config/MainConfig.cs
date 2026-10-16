@@ -46,6 +46,7 @@ public class MainConfig
         public UnlockUtageConfig UnlockUtage { get; set; } = new UnlockUtageConfig();
         public bool ResetLoginBonusRecord { get; set; } = false;
         public bool ForceCurrentIsBest { get; set; } = false;
+        public bool BlockBanState { get; set; } = false;
         public bool SetAllCharacterAsSameAndLock { get; set; } = false;
         public RewriteLoginBonusStampConfig RewriteLoginBonusStamp { get; set; } = new RewriteLoginBonusStampConfig();
         public bool UnlockKaleidxScope { get; set; } = false;

@@ -63,6 +63,7 @@ cheat:
     unlockDoublePlayerMusic: false
   resetLoginBonusRecord: false
   forceCurrentIsBest: false
+  blockBanState: false
   setAllCharacterAsSameAndLock: false
   unlockKaleidxScope: false
   kaleidxScope: false

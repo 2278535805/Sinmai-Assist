@@ -63,6 +63,7 @@ cheat:
     unlockDoublePlayerMusic: false # 强制解锁宴会场双人模式歌曲
   resetLoginBonusRecord: false # 重置登录奖励记录
   forceCurrentIsBest: false # 强制当前游玩成绩为新成绩(可能会对Best50造成改动)
+  blockBanState: false # 屏蔽banState判定(上传数据不变)
   setAllCharacterAsSameAndLock: false # 允许你设置5个相同的旅行伙伴并锁定设置（以队长为准）
   unlockKaleidxScope: false # 解锁KaleidxScope(不写入存档)
   kaleidxScope: false # KaleidxScope面板

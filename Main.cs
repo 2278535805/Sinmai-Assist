@@ -195,6 +195,7 @@ namespace SinmaiAssist
             if (MainConfig.Cheat.UnlockEvent) Patch(typeof(UnlockEvent));
             if (MainConfig.Cheat.ResetLoginBonusRecord) Patch(typeof(ResetLoginBonusRecord));
             if (MainConfig.Cheat.ForceCurrentIsBest) Patch(typeof(ForceCurrentIsBest));
+            if (MainConfig.Cheat.BlockBanState) Patch(typeof(BlockBanState));
             if (MainConfig.Cheat.SetAllCharacterAsSameAndLock) Patch(typeof(SetAllCharacterAsSameAndLock));
             if (MainConfig.Cheat.UnlockKaleidxScope) Patch(typeof(UnlockKaleidxScope));
             if (MainConfig.Cheat.RewriteLoginBonusStamp.Enable) Patch(typeof(RewriteLoginBonusStamp));
