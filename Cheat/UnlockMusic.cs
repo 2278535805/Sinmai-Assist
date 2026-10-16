@@ -10,6 +10,7 @@ public class UnlockMusic
     [HarmonyPatch(typeof(NotesListManager), "IsUnlockBase")]
     public static void UnlockBase(ref bool __result,ref int id, ref int index)
     {
+        if (id == 11879) return;
         if (__result == false && SinmaiAssist.MainConfig.Cheat.UnlockMusic.SaveToUserData)
         {
             User.GetUserData(index).AddUnlockMusic(UserData.MusicUnlock.Base, id);

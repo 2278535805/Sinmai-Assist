@@ -14,6 +14,7 @@ public class UnlockMaster
     [HarmonyPatch(typeof(NotesListManager), "IsUnlockMaster")]
     public static void IsUnlockMaster(ref bool __result, ref int id, ref int index)
     {
+        if (id == 11879) return;
         if (__result == false && SinmaiAssist.MainConfig.Cheat.UnlockMaster.SaveToUserData)
         {
             User.GetUserData(index).AddUnlockMusic(UserData.MusicUnlock.Master, id);
@@ -25,6 +26,7 @@ public class UnlockMaster
     [HarmonyPatch(typeof(NotesListManager), "HasMasterScore")]
     public static void HasMasterScore(ref bool __result, ref int musicId, ref int index)
     {
+        if (musicId == 11879) return;
         if (__result == false && SinmaiAssist.MainConfig.Cheat.UnlockMaster.SaveToUserData)
         {
             User.GetUserData(index).AddUnlockMusic(UserData.MusicUnlock.Master, musicId);
@@ -37,6 +39,7 @@ public class UnlockMaster
     [HarmonyPatch(typeof(NotesListManager), "IsUnlockReMaster")]
     public static void IsUnlockReMaster(ref bool __result, ref int id, ref int index)
     {
+        if (id == 11879) return;
         if (Singleton<UserDataManager>.Instance.GetUserData(index).IsEntry) return;
         if (__result == false && SinmaiAssist.MainConfig.Cheat.UnlockMaster.SaveToUserData)
         {
@@ -50,6 +53,7 @@ public class UnlockMaster
     [HarmonyPatch(typeof(NotesListManager), "HasReMasterScore")]
     public static void HasReMasterScore(ref bool __result, ref int musicId, ref int index)
     {
+        if (musicId == 11879) return;
         if (__result == false && SinmaiAssist.MainConfig.Cheat.UnlockMaster.SaveToUserData)
         {
             User.GetUserData(index).AddUnlockMusic(UserData.MusicUnlock.ReMaster, musicId);
